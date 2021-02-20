@@ -1,30 +1,23 @@
-# -*- coding: utf-8 -*-
 """
 Created on Sat Feb 20 13:48:36 2021
 
 @author: James
 """
 
-
 from random import shuffle    
-class Card:
-    def __init__(self,suit,num):
-        self.suit = suit
-        self.num = num
 
-deck = list()
-suits = ['Diamond', 'Heart', 'Spade', 'Club']
+deck = []
+suits = ['D', 'H', 'S', 'C']
 
-nums = ['2','3','4','5','6','7','8','9','10','J','Q','K','A']
+nums = ['2','3','4','5','6','7','8','9','10','11','12','13','14']
 
-for suit in suits: #This is the code that actually makes a deck
-    for num in nums:
-        deck.append(Card(suit,num))
+for n in nums:
+    for s in suits:
+        card = Card(s, n)
+        deck.append(card)
+
 
 shuffle(deck)
-for number in range(13):
-    for player in range(4):
-       print(deck.pop().num)
-       
 
-
+for i in range(len(deck)):
+    print(deck[i].num + deck[i].suit)

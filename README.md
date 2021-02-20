@@ -1,2 +1,2 @@
-# 2021-revolution-uc
+# poker-ai
 
