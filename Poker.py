@@ -167,9 +167,3 @@ class Poker():
     # TODO: distribute pot
     def river(self):
         pass
-
-    '''
-    def switch(self, cards):
-        default = "Impossible Hand"
-        return getattr(self, 'case_' + str(self.card.suit) + int(values), lambda: default)()
-    '''
