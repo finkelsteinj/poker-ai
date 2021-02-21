@@ -8,10 +8,10 @@ class Poker():
     global numPlayers, numChips
     
     players = []
-    deck = []
-    suits = ['D','H','S','C']
-    ids = ['2','3','4','5','6','7','8','9','10','J','Q','K','A']
-    values = [2,3,4,5,6,7,8,9,10,11,12,13,14]
+  deck   = []
+suits  = ['of Diamonds ', 'of Hearts ', 'of Spades ', 'of Clubs ']
+ids    = ['2 ', '3 ', '4 ', '5 ', '6 ', '7 ', '8 ', '9 ', '10 ', 'J ', 'Q ', 'K ', 'A ']
+values = ['2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13', '14']
 
     # initialize deck
     for i in range(len(ids)):
@@ -52,6 +52,36 @@ class Poker():
         # TODO: winner?
 
     def flop():
+
+class Card:
+    def __init__(self, suit: str, id: str, value: int, isInHand=False, isOnTable=False):
+        self.suit = suit
+        self.id = id
+        self.value = value
+        self.isInHand = isInHand
+        self.isOnTable = isOnTable
+
+    def toString(self):
+        return self.id + self.suit
+
+for i in range(len(ids)):
+    for j in range(len(suits)):
+        card = Card(suits[j], ids[i], values[i])
+        deck.append(card)
+
+deck.append(deck[4])
+deck.pop(4)
+shuffle(deck)
+print(deck[4].toString())
+print(deck[5].toString())
+print(deck[6].toString())
+print(deck[7].toString())
+deck.append(deck[8])
+deck.pop(7)
+print(deck[7].toString())
+deck.append(deck[8])
+deck.pop(8)
+print(deck[8].toString())
         # TODO: flip three cards from deck
         # TODO: checks and bets
         # TODO: update pot
