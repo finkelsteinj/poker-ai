@@ -10,7 +10,7 @@ class Player():
         self.isActive = isActive
 
     def toString(self):
-        print(f'{self.playerID}: {self.card1.toString()}, {self.card2.toString()} -- {self.numChips} chips')
+        return f'{self.playerID}: {self.card1.toString()}, {self.card2.toString()} -- {self.numChips} chips'
 
 '''
     def check():

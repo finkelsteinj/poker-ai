@@ -23,6 +23,7 @@ class Poker():
 
         self.initialDeal()
         self.preflop()
+        self.flop()
         
     def isWinner(self):
         pass
@@ -83,7 +84,7 @@ class Poker():
                         index = players[count].playerID
             else:
                 continue
-            if count == len(players) - 1:
+            if count == len(players) - 1 and self.bet > 0:
                 count = 0
             else:
                 count += 1
@@ -110,11 +111,10 @@ class Poker():
 
         # output hands
         for i in range(self.numPlayers):
-            players[i].toString()
+            print(players[i].toString())
 
     # TODO: assign blinds
-    # TODO: checks and bets
-    # TODO: update s
+    # TODO: update pot
     # TODO: winner?
     def preflop(self):
         '''
@@ -128,7 +128,6 @@ class Poker():
         self.checksAndBets()
 
     # TODO: flip three cards from deck
-    # TODO: checks and bets
     # TODO: update pot
     # TODO: winner?
     def flop(self):
@@ -139,15 +138,15 @@ class Poker():
         print(deck[5].toString())
         print(deck[6].toString())
         print(deck[7].toString())
-        Flop1 = list(deck[4].toString(), deck[5].toString(), deck[6].toString())
+        Flop1 = [deck[4].toString(), deck[5].toString(), deck[6].toString()]
         deck.append(deck[8])
         deck.pop(7)
         print(deck[7].toString())
-        Flop2 = list(deck[4].toString(), deck[5].toString(), deck[6].toString(), deck[7].toString())
+        Flop2 = [deck[4].toString(), deck[5].toString(), deck[6].toString(), deck[7].toString()]
         deck.append(deck[8])
         deck.pop(8)
         print(deck[8].toString())
-        Flop3 = list(deck[4].toString(), deck[5].toString(), deck[6].toString(), deck[7].toString(), deck[8].toString())
+        Flop3 = [deck[4].toString(), deck[5].toString(), deck[6].toString(), deck[7].toString(), deck[8].toString()] 
         self.checksAndBets()
 
     def turn(self):
