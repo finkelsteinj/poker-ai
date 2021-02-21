@@ -1,0 +1,26 @@
+Players = int(input('how many people are playing');
+player1 = Player(100,,,,  )
+Aichips = 100
+playerBank = 100
+pot = 0
+
+def turn(playerBank,label):
+    win.getMouse()
+    action = ent.getText()
+    if action == 'check':
+        pass
+    elif action == 'call':
+        playerBank = playerBank - bet
+        pot = pot + bet
+    elif action == 'raise':
+        bet = bet.getText()
+        pot = pot + bet
+        playerBank = playerBank - bet
+    elif action == 'fold':
+        break
+    elif action == 'fold':
+        Aichips = Aichips + pot
+        
+    
+    for k in range(Players):
+        turn;
