@@ -28,13 +28,8 @@ class Poker():
         pass
 
     # TODO: check for all-in
-    # TODO: update loop for raise
-    # TODO: update raise/check interaction
     # TODO: improve question line info
     def checksAndBetsFunc(self, case: str, p: Player):
-        self.case = case
-        self.p = p
-
         def fold():
             print(f'Player {p.playerID} folds.')
             p.isActive = False
@@ -64,7 +59,7 @@ class Poker():
             self.pot += self.bet
             print(f'Player {p.playerID} raises {self.bet} chips.')
         
-        def default(self):
+        def default():
             print('Invalid function.')
 
         switcher = {
@@ -75,16 +70,23 @@ class Poker():
         }.get(case, default)()
     
     def checksAndBets(self):
+        index = -1
         count = 0
         while self.bet > 0 or count < len(players):
             if players[count].isActive or self.bet > 0:
-                action = input(f'Player {players[count].playerID}: What do you want to do? (fold, check, call, raise): ')
-                self.checksAndBetsFunc(action, players[count])
-                if count == len(players) - 1:
+                if count == index:
                     break
+                else:
+                    action = input(f'Player {players[count].playerID}: What do you want to do? (fold, check, call, raise): ')
+                    self.checksAndBetsFunc(action, players[count])
+                    if (action == 'raise'):
+                        index = players[count].playerID
             else:
                 continue
-            count += 1
+            if count == len(players) - 1:
+                count = 0
+            else:
+                count += 1
 
         print(f'The pot is {self.pot} chips.')
         for i in players:
