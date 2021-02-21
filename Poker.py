@@ -5,8 +5,10 @@ from random import shuffle
 class Poker():
 
     global deck, suits, ids, values, players
-    global numPlayers, numChips
-    
+    global numPlayers, numChips, pot, bet
+
+    pot = 0
+    bet = 0
     players = []
     deck = []
     suits = ['D','H','S','C']
@@ -15,8 +17,8 @@ class Poker():
 
     # initialize deck
     for i in range(len(ids)):
-        for j in range(len(suits)):
-            card = Card(suits[j], ids[i], values[i])
+        for suit in suits:
+            card = Card(suit, ids[i], values[i])
             deck.append(card)
 
     def __init__(self):
@@ -24,7 +26,7 @@ class Poker():
         self.initialDeal()
         self.checksAndBets()
         
-    def isWinner():
+    def isWinner(self):
         pass
 
     def initialDeal(self):
@@ -36,20 +38,21 @@ class Poker():
         
         # deal cards
         count = 0
-        for i in range(numPlayers):
-            players[i].card1 = deck[count]
-            players[i].card2 = deck[count+1]
+        for i in players:
+            i.card1 = deck[count]
+            i.card2 = deck[count+1]
             count += 2
         
+        # output hands
         for i in range(numPlayers):
             players[i].toString()
 
-    def preflop(self):
-        # TODO: assign blinds
-        # TODO: checks and bets
-        # TODO: update pot
-        # TODO: winner?
 
+    # TODO: assign blinds
+    # TODO: checks and bets
+    # TODO: update pot
+    # TODO: winner?
+    def preflop(self):
         for i in range(len(players)):
             if players[i].isBlind:
                 # big blind bets 2 chips
@@ -57,61 +60,131 @@ class Poker():
                 players[i].isBlind = False
                 players[i+1].isBlind = True
 
-    # TODO: fix 
     # TODO: check for all-in
     # TODO: update loop for raise
     # TODO: update raise/check interaction
     # TODO: improve question line info
+    def checksAndBetsFunc(self, case: str, p: Player):
+        self.case = case
+        self.p = p
+        activeRaise = False
+
+        global pot, bet
+
+        def fold():
+            print(f'Player {p.playerID} folds.')
+            p.isActive = False
+            p.card1.state = 0
+            p.card2.state = 0
+
+        def check():
+            if bet > 0:
+                print(f'Someone raised ${bet}.')
+                action = input(f'Player {p.playerID}: What do you want to do? (call, fold, raise): ')
+            else:
+                pass
+
+        def call():
+            if bet == 0:
+                self.bet = int(input(f'Player {p.playerID}: How much do you want to bet? '))
+                p.numChips -= bet
+                pot += bet
+            else:
+                print(f'Player {p.playerID} calls.')
+                p.numChips -= bet
+                pot += bet
+
+        def raise2():
+            bet = int(input(f'Player {p.playerID}: how much do you want to raise? '))
+            print(f'Player {p.playerID} raises ${bet}.')
+            p.numChips -= bet
+            pot += bet
+#            activeRaise = True
+
+        def default():
+            print('Invalid function.')
+
+        switcher = {
+            'fold'  : fold,
+            'check' : check,
+            'call'  : call,
+            'raise' : raise2,
+        }
+
+        if activeRaise:
+            while activeRaise:
+                switcher.get(case, default)()
+        else:
+            switcher.get(case, default)()
+
     def checksAndBets(self):
         for i in players:
+            action = input(f'Player {i.playerID}: What do you want to do? (call, check, fold, raise): ')
+            self.checksAndBetsFunc(action, i)
+
+    '''
+    def checksAndBets(self):
+        j = 0
+        while j < len(players):
+            i = players[j]
             pot = 0
             bet = 0
-            action = input(f'Player {i.playerID}: What do you want to do? (call, check, raise, fold): ')
+            temp = 0
+            action = input(f'Player {i.playerID}: What do you want to do? (call, check, fold, raise): ')
             if action == 'fold':
-                print(f'Player {i.playerID}: Folds.')
+                print(f'Player {i.playerID} folds.')
                 i.isActive = False
                 i.card1.state = 0
                 i.card2.state = 0
                 continue
             elif action == 'check':
-                continue
+                condition = True
+                while condition:
+                    if bet > 0:
+                        print(f'Someone raised ${bet}.')
+                        action = input(f'Player {i.playerID}: What do you want to do? (call, fold, raise): ')
+                    else:
+                        condition = False
             elif action == 'call':
                 if bet == 0:    
                     bet = int(input(f'Player {i.playerID}: how much do you want to bet? '))
                     i.numChips -= bet
                     pot += bet
                 else:
-                    print(f'Player {i.playerID}: Called the ${bet}.')
+                    print(f'Player {i.playerID} calls')
                     i.numChips -= bet
                     pot += bet
             elif action == 'raise':
                 bet = int(input(f'Player {i.playerID}: how much do you want to raise? '))
-                print(f'Player {i.playerID}: Raised ${bet}.')
+                print(f'Player {i.playerID} raises ${bet}.')
                 i.numChips -= bet
                 pot += bet
-    
-        print(f'the pot is now ${pot}.')
+            j += 1
+
+        print(f'The pot is now ${pot}.')
         for i in players:
-            print(f'Player {i.playerID}\'s bank is now {i.numChips}.')
+            print(f'Player {i.playerID}\'s bank is now ${i.numChips}.')
+        print('-----------------------------------------------------')
+'''
 
 '''
-    def checkHands():
+    def checkHands(self):
         
 
-    def flop():
+    def flop(self):
         # TODO: flip three cards from deck
         # TODO: checks and bets
         # TODO: update pot
         # TODO: winner?
 
-    def turn():
+    def turn(self):
         # TODO: burn one card
         # TODO: flip one card
         # TODO: checks and bets
         # TODO: update pot
         # TODO: winner?
 
-    def river():
+    def river(self):
         # TODO: burn one card
         # TODO: flip another
         # TODO: checks and bets
