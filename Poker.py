@@ -1,36 +1,50 @@
+"""
+Created on Sat Feb 20 22:36:43 2021
+
+@author: jared
+"""
 from Player import Player
 from Card import Card
 from random import shuffle    
 
-players = []
-deck = []
-suits = ['D','H','S','C']
-ids = ['2','3','4','5','6','7','8','9','10','J','Q','K','A']
-values = [2,3,4,5,6,7,8,9,10,11,12,13,14]
-
-# initialize deck
-for i in range(len(ids)):
-    for suit in suits:
-        card = Card(suit, ids[i], values[i])
-        deck.append(card)
-
 class Poker():
 
-    def __init__(self, numPlayers: int=0, pot: int=0, bet: int=0):
-        self.numPlayers = numPlayers
-        self.pot = pot
-        self.bet = bet
+    global deck, suits, ids, values, players
+    global numPlayers, numChips, pot, bet
 
+    pot = 0
+    bet = 0
+    players = []
+    deck = []
+    suits = ['D','H','S','C']
+    ids = ['2','3','4','5','6','7','8','9','10','J','Q','K','A']
+    values = [2,3,4,5,6,7,8,9,10,11,12,13,14]
+
+    # initialize deck
+    for i in range(len(ids)):
+        for suit in suits:
+            card = Card(suit, ids[i], values[i])
+            deck.append(card)
+
+    def __init__(self):
+        shuffle(deck)
         self.initialDeal()
-        self.preflop()
-        self.flop()
+        self.checksAndBets()
         
     def isWinner(self):
         pass
 
     # TODO: check for all-in
+    # TODO: update loop for raise
+    # TODO: update raise/check interaction
     # TODO: improve question line info
     def checksAndBetsFunc(self, case: str, p: Player):
+        self.case = case
+        self.p = p
+        
+        global pot, bet
+        activeRaise = False
+
         def fold():
             print(f'Player {p.playerID} folds.')
             p.isActive = False
@@ -38,29 +52,29 @@ class Poker():
             p.card2.state = 0
 
         def check():
-            if self.bet > 0:
-                print(f'Someone raised ${self.bet}.')
+            if bet > 0:
+                print(f'Someone raised ${bet}.')
                 action = input(f'Player {p.playerID}: What do you want to do? (call, fold, raise): ')
             else:
                 pass
 
         def call():
-            if self.bet == 0:
+            if bet == 0:
                 self.bet = int(input(f'Player {p.playerID}: How much do you want to bet? '))
-                p.numChips -= self.bet
-                self.pot += self.bet
+                p.numChips -= bet
+                pot += bet
             else:
                 print(f'Player {p.playerID} calls.')
-                p.numChips -= self.bet
-                self.pot += self.bet
+                p.numChips -= bet
+                pot += bet
 
         def raise2():
-            self.bet = int(input(f'Player {p.playerID}: How much do you want to raise? '))
-            p.numChips -= self.bet
-            self.pot += self.bet
-            print(f'Player {p.playerID} raises {self.bet} chips.')
+            bet = int(input(f'Player {p.playerID}: How much do you want to raise? '))
+            print(f'Player {p.playerID} raises ${bet}.')
+            p.numChips -= bet
+            pot += bet
         
-        def default():
+        def default(self):
             print('Invalid function.')
 
         switcher = {
@@ -68,89 +82,59 @@ class Poker():
             'check' : check,
             'call'  : call,
             'raise' : raise2
-        }.get(case, default)()
+        }
+        
+        switcher.get(case, default)
     
     def checksAndBets(self):
-        index = -1
-        count = 0
-        while self.bet > 0 or count < len(players):
-            if players[count].isActive or self.bet > 0:
-                if count == index:
-                    break
-                else:
-                    action = input(f'Player {players[count].playerID}: What do you want to do? (fold, check, call, raise): ')
-                    self.checksAndBetsFunc(action, players[count])
-                    if (action == 'raise'):
-                        index = players[count].playerID
-            else:
-                continue
-            if count == len(players) - 1 and self.bet > 0:
-                count = 0
-            else:
-                count += 1
-
-        print(f'The pot is {self.pot} chips.')
         for i in players:
-            print(f'Player {i.playerID}\'s bank is now {i.numChips} chips.')
+            action = input(f'Player {i.playerID}: What do you want to do? (fold, check, call, raise): ')
+            self.checksAndBetsFunc(action, i)
+
+        print(f'The pot is ${pot}.')
+        for i in players:
+            print(f'Player {i.playerID}\'s bank is now ${i.numChips}.')
             activeRaise = True
         print('-----------------------------------------------------')
 
     def initialDeal(self):
         # create players
-        for i in range(self.numPlayers):
-            numChips = int(input(f'How many chips is player {i} buying in for? '))
+        numPlayers = int(input('how many players are playing? '))
+        for i in range(numPlayers):
+            numChips = int(input(f'how many chips is player {i+1} buying in for? '))
             players.append(Player(i, numChips))
         
         # deal cards
-        shuffle(deck)
         count = 0
         for i in players:
             i.card1 = deck[count]
             i.card2 = deck[count+1]
             count += 2
-
+        
         # output hands
-        for i in range(self.numPlayers):
-            print(players[i].toString())
+        for i in range(numPlayers):
+            players[i].toString()
 
     # TODO: assign blinds
+    # TODO: checks and bets
     # TODO: update pot
     # TODO: winner?
     def preflop(self):
-        '''
         for i in range(len(players)):
-            if players[i] == 0:
+            if players[i].isBlind:
                 # big blind bets 2 chips
                 # small blind bets 1 chip
                 players[i].isBlind = False
                 players[i+1].isBlind = True
-        '''
-        self.checksAndBets()
 
     # TODO: flip three cards from deck
+    # TODO: checks and bets
     # TODO: update pot
     # TODO: winner?
     def flop(self):
-        deck.append(deck[4])
-        deck.pop(4)
-        shuffle(deck)
-        print(deck[4].toString())
-        print(deck[5].toString())
-        print(deck[6].toString())
-        print(deck[7].toString())
-        Flop1 = [deck[4].toString(), deck[5].toString(), deck[6].toString()]
-        deck.append(deck[8])
-        deck.pop(7)
-        print(deck[7].toString())
-        Flop2 = [deck[4].toString(), deck[5].toString(), deck[6].toString(), deck[7].toString()]
-        deck.append(deck[8])
-        deck.pop(8)
-        print(deck[8].toString())
-        Flop3 = [deck[4].toString(), deck[5].toString(), deck[6].toString(), deck[7].toString(), deck[8].toString()] 
-        self.checksAndBets()
-
-    def turn(self):
-        pass
+        
+        def turn(self):
+            pass
     
     # TODO: burn one card
     # TODO: flip another
@@ -161,8 +145,24 @@ class Poker():
     def river(self):
         pass
 
-'''
-    def checkHands():
+deck.append(deck[4])
+deck.pop(4)
+shuffle(deck)
+print(deck[4].toString())
+print(deck[5].toString())
+print(deck[6].toString())
+print(deck[7].toString())
+Flop1 = list(deck[4].toString(), deck[5].toString(), deck[6].toString())
+deck.append(deck[8])
+deck.pop(7)
+print(deck[7].toString())
+Flop2 = list(deck[4].toString(), deck[5].toString(), deck[6].toString(), deck[7].toString())
+deck.append(deck[8])
+deck.pop(8)
+print(deck[8].toString())
+flop3 = list(deck[4].toString(), deck[5].toString(), deck[6].toString(), deck[7].toString(), deck[8].toString())
+
+def checkHands():
         class PythonSwitchStatement:
         #Syntax most likely wrong but the ".ssubset" and ".intersection" method is the 
         #most useful method for comparing hands to the blind
@@ -172,57 +172,58 @@ class Poker():
         # my thought was to use the string printed out and compare 
         #the two players and whichever has the higher ranking
         #string will be given the isWinner and acquires the pot
-            def switch(self, cards):
-                default = "Impossible Hand"
-                return getattr(self, 'case_' + str(suits) + int(values), lambda: default)()
+       
+           for i in players:
+                 def switch(self, cards):
+                    default = "Impossible Hand"
+                    return getattr(self, 'case_' + str(self.card.suit) + int(values), lambda: default)()
       
-            def case_1(self):#Royal Flush
-                RFlush = list (card(suits[j], values[10]), card(suits[j], values[11]), card(suits[j], values[12]), card(suits[j], values[13]), card(suits[j], values[14]))
-                if  (card.suits[j] == flop3):
-                    flop3.append(Hand)
+                    def case_1(self):#Royal Flush
+                        RFlush = list (self.card.suit, values[10]), self.card.suit, values[11], self.card.suit, values[12], self.card.suit, values[13], self.card.suit, values[14]
+                        if  (self.card.suit == flop3):
+                            flop3.append(Hand)
                     if flop3.issubset(RFlush) == True:
-                    print("Royal Flush")
-                    players[i] = isWinner()
+                        print("Royal Flush")
+                    
                   
-            def case_2(self): #Straight Flush
-                if (card.suits[j] == flop3):
-                    Combi = flop3.append(Hand)
-                if flop3.issubset(Flush):
-                    print("Straight Flush")
+                    def case_2(self): #Straight Flush
+                        if (self.card.suit == flop3):
+                            Combi = flop3.append(Hand)
+                    if flop3.issubset(Combi):
+                        print("Straight Flush")
                                 
-            def case_3(self): #Four of a kind
-                if (((players[i].card1.values[i]).intersection(flop3)) == 2 and ((players[i].card2.values[i]).intersection(flop3) == 2)):
-                    print("Four of a kind")
+                        def case_3(self): #Four of a kind
+                            if (((self.card1.values).intersection(flop3)) == 2 and ((self.card2.values).intersection(flop3) == 2)):
+                                print("Four of a kind")
           
-            def case_4(self): #Full House
-                if (((players[i].card1.values[i]).intersection(flop3)) == 2 and ((players[i].card2.values).intersection(flop3) == 3)):
-                    print("Full House")
-                elif (((players[i].card1.values[i]).intersection(flop3)) == 3 and ((players[i].card2.values[i]).intersection(flop3) == 2)): 
-                    print("Full House")
+                    def case_4(self): #Full House
+                        if (((self.card1.values).intersection(flop3)) == 2 and ((self.card2.values).intersection(flop3) == 3)):
+                            print("Full House")
+                        elif (((self.card1.values).intersection(flop3)) == 3 and ((self.card2.values).intersection(flop3) == 2)): 
+                            print("Full House")
                         
-            def case_5(self): #Flush
-                if (players[i].card1.suits == players[i].card2.suits and True):
-                    pass
+                        def case_5(self): #Flush
+                            if (self.card1.suit == players.card2.suits and True):
+                                pass
                     
-            def case_6(self): #Straight
-                pass
+                        def case_6(self): #Straight
+
+                            def case_7(self): #Three of a kind
+                                if ((self.card1.values).intersection(flop3)) == 3 and ((self.card2.values).intersection(flop3) != 2) or ((self.card1.values).intersection(flop3)) != 2 and (((self.card2.values).intersection(flop3) == 3)):
+                                    print("Three of a kind")
                     
-            def case_7(self): #Three of a kind
-                if ((((players[i].card1.values[i]).intersection(flop3)) == 3 and ((players[i].card2.values).intersection(flop3) != 2)) or ((players[i].card1.values[i]).intersection(flop3)) != 2 and ((players[i].card2.values).intersection(flop3) == 3))):
-                    print("Three of a kind")
-                    
-            def case_8(self): #Two Pair
-                if ((((players[i].card1.values[i]).intersection(flop3)) == 2 and ((players[i].card2.values).intersection(flop3) != 3)) or ((players[i].card1.values[i]).intersection(flop3)) != 3 and ((players[i].card2.values).intersection(flop3) == 2))):
-                    print("Two pair")
+                    def case_8(self): #Two Pair
+                        if ((self.card1.values).intersection(flop3)) == 2 and ((self.card2.values).intersection(flop3) != 3) or ((self.card1.values).intersection(flop3)) != 3 and ((self.card2).intersection(flop3) == 2):
+                            print("Two pair")
             
-            def case_9(self): #One Pair
-                if players[i].card1.values[i] == 1 or players[i].card2.values[i] == 1:
-                    print("One Pair")
+                    def case_9(self): #One Pair
+                        if self.card1.values == 1 or self.card2.values == 1:
+                            print("One Pair")
             
-            def case_10(self): #High Card
-                if Hand != flop3:
-                    if players[i].card1.values[i] > players[i].card2.values[i]:
-                        print('High card card1')
-                    else:
-                        print('High card card2')
-    '''      
+                        def case_10(self): #High Card
+                            if Hand != flop3:
+                                if self.card1.values > self.card2.values:
+                                    print('High card ''players.card1.values')
+                                else:
+                                            print('High card ''players.card2.values')
+      
