@@ -206,7 +206,20 @@ def checkHands():
                             if (self.card1.suit == players.card2.suits and True):
                                 pass
                     
-                        def case_6(self): #Straight
+                       def case_6(self): #Straight
+                            values = [i[0] for i in Flop3]
+                            value_counts = deck(lambda:0)
+                            for v in values:
+                            value_counts[v] += 1
+                            rank_values = [values[i] for i in values]
+                            value_range = max(values) - min(values)
+                            if len(set(value_counts.values())) == 1 and (value_range==4):
+                                return True
+                            else:
+                            #check straight with low Ace
+                            if set(ids) == set(["A", "2", "3", "4", "5"]):
+                                return True
+                            return False
 
                             def case_7(self): #Three of a kind
                                 if ((self.card1.values).intersection(flop3)) == 3 and ((self.card2.values).intersection(flop3) != 2) or ((self.card1.values).intersection(flop3)) != 2 and (((self.card2.values).intersection(flop3) == 3)):
