@@ -78,6 +78,7 @@ class Poker():
             'call'  : call,
             'raise' : raise2
         }
+        
         switcher.get(case, default)
     
     def checksAndBets(self):
