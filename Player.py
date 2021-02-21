@@ -1,7 +1,7 @@
 from Card import Card
 
 class Player():
-    def __init__(self, playerID: int, numChips: int, card1=Card('', '', 0), card2=Card('', '', 0), isBlind=False, isActive=False):
+    def __init__(self, playerID: int, numChips: int, card1=Card('', '', 0), card2=Card('', '', 0), isBlind: int=0, isActive=True): # isBlind: 0 - no, 1 - big, 2 - small
         self.playerID = playerID
         self.numChips = numChips
         self.card1 = card1
@@ -10,7 +10,6 @@ class Player():
         self.isActive = isActive
 
     def toString(self):
-        # print(self.name + ": " + self.card1.toString() + ", " + self.card2.toString() + f' -- {self.numChips} chips')
         print(f'{self.playerID}: {self.card1.toString()}, {self.card2.toString()} -- {self.numChips} chips')
 
 '''
