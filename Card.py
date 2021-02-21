@@ -1,4 +1,14 @@
 class Card:
-    def __init__(self, suit, num):
+    def __init__(self, suit, id, value, isInHand=False, isOnTable=False):
         self.suit = suit
-        self.num = num
+        self.id = id
+        self.value = value
+        self.isInHand = isInHand
+        self.isOnTable = isOnTable
+'''
+    def shuffle():
+
+
+    def deal():
+
+'''
