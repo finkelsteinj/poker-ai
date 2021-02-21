@@ -6,6 +6,7 @@ class Poker():
 
     global deck, suits, ids, values, players
     global numPlayers, numChips
+    
     players = []
     deck = []
     suits = ['D','H','S','C']
@@ -22,33 +23,27 @@ class Poker():
         shuffle(deck)
         self.initialDeal()
 
-    numChips = 10
     def initialDeal(self):
-        # TODO: create players
-        # TODO: deal cards
-        numPlayers = int(input('how many people are playing: '))
+        # create players
+        numPlayers = int(input('how many people are playing? '))
         for i in range(numPlayers):
-            players.append(Player(numChips))
+            numChips = int(input(f'how many chips is player {i+1} buying in for? '))
+            players.append(Player(i, numChips))
         
-        print(players[0].card1.id + players[0].card1.suit +
-              ", " + players[0].card2.id + players[0].card2.suit)
+        # deal cards
+        count = 0
+        for i in range(numPlayers):
+            players[i].card1 = deck[count]
+            players[i].card2 = deck[count+1]
+            count += 2
         
-        '''
-        players[0] = Player(numChips, deck[0], deck[1])
-        player2 = Player(numChips, deck[2], deck[3])
-        print(player1.card1.id + player1.card1.suit +
-              ", " + player1.card2.id + player1.card2.suit)
-        print(player2.card1.id + player2.card1.suit +
-              ", " + player2.card2.id + player2.card2.suit)
-        '''
-
-
-
+        for i in range(numPlayers):
+            players[i].toString()
 
 
 '''
     def checkHands():
-
+        
 
     def preflop():
         # TODO: assign blinds

@@ -5,6 +5,10 @@ class Card:
         self.value = value
         self.isInHand = isInHand
         self.isOnTable = isOnTable
+
+    def toString(self):
+        return self.id + self.suit
+
 '''
     def shuffle():
 
