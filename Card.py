@@ -1,5 +1,5 @@
 class Card:
-    def __init__(self, suit, id, value, isInHand=False, isOnTable=False):
+    def __init__(self, suit: str, id: str, value: int, isInHand=False, isOnTable=False):
         self.suit = suit
         self.id = id
         self.value = value
