@@ -2,29 +2,27 @@ from Player import Player
 from Card import Card
 from random import shuffle    
 
+players = []
+deck = []
+suits = ['D','H','S','C']
+ids = ['2','3','4','5','6','7','8','9','10','J','Q','K','A']
+values = [2,3,4,5,6,7,8,9,10,11,12,13,14]
+
+# initialize deck
+for i in range(len(ids)):
+    for suit in suits:
+        card = Card(suit, ids[i], values[i])
+        deck.append(card)
+
 class Poker():
 
-    global deck, suits, ids, values, players
-    global numPlayers, numChips, pot, bet
+    def __init__(self, numPlayers: int=0, pot: int=0, bet: int=0):
+        self.numPlayers = numPlayers
+        self.pot = pot
+        self.bet = bet
 
-    pot = 0
-    bet = 0
-    players = []
-    deck = []
-    suits = ['D','H','S','C']
-    ids = ['2','3','4','5','6','7','8','9','10','J','Q','K','A']
-    values = [2,3,4,5,6,7,8,9,10,11,12,13,14]
-
-    # initialize deck
-    for i in range(len(ids)):
-        for suit in suits:
-            card = Card(suit, ids[i], values[i])
-            deck.append(card)
-
-    def __init__(self):
-        shuffle(deck)
         self.initialDeal()
-        self.checksAndBets()
+        self.preflop()
         
     def isWinner(self):
         pass
@@ -36,9 +34,6 @@ class Poker():
     def checksAndBetsFunc(self, case: str, p: Player):
         self.case = case
         self.p = p
-        
-        global pot, bet
-        activeRaise = False
 
         def fold():
             print(f'Player {p.playerID} folds.')
@@ -47,27 +42,27 @@ class Poker():
             p.card2.state = 0
 
         def check():
-            if bet > 0:
-                print(f'Someone raised ${bet}.')
+            if self.bet > 0:
+                print(f'Someone raised ${self.bet}.')
                 action = input(f'Player {p.playerID}: What do you want to do? (call, fold, raise): ')
             else:
                 pass
 
         def call():
-            if bet == 0:
+            if self.bet == 0:
                 self.bet = int(input(f'Player {p.playerID}: How much do you want to bet? '))
-                p.numChips -= bet
-                pot += bet
+                p.numChips -= self.bet
+                self.pot += self.bet
             else:
                 print(f'Player {p.playerID} calls.')
-                p.numChips -= bet
-                pot += bet
+                p.numChips -= self.bet
+                self.pot += self.bet
 
         def raise2():
-            bet = int(input(f'Player {p.playerID}: How much do you want to raise? '))
-            print(f'Player {p.playerID} raises ${bet}.')
-            p.numChips -= bet
-            pot += bet
+            self.bet = int(input(f'Player {p.playerID}: How much do you want to raise? '))
+            p.numChips -= self.bet
+            self.pot += self.bet
+            print(f'Player {p.playerID} raises {self.bet} chips.')
         
         def default(self):
             print('Invalid function.')
@@ -77,50 +72,58 @@ class Poker():
             'check' : check,
             'call'  : call,
             'raise' : raise2
-        }
-        
-        switcher.get(case, default)
+        }.get(case, default)()
     
     def checksAndBets(self):
-        for i in players:
-            action = input(f'Player {i.playerID}: What do you want to do? (fold, check, call, raise): ')
-            self.checksAndBetsFunc(action, i)
+        count = 0
+        while self.bet > 0 or count < len(players):
+            if players[count].isActive or self.bet > 0:
+                action = input(f'Player {players[count].playerID}: What do you want to do? (fold, check, call, raise): ')
+                self.checksAndBetsFunc(action, players[count])
+                if count == len(players) - 1:
+                    break
+            else:
+                continue
+            count += 1
 
-        print(f'The pot is ${pot}.')
+        print(f'The pot is {self.pot} chips.')
         for i in players:
-            print(f'Player {i.playerID}\'s bank is now ${i.numChips}.')
+            print(f'Player {i.playerID}\'s bank is now {i.numChips} chips.')
             activeRaise = True
         print('-----------------------------------------------------')
 
     def initialDeal(self):
         # create players
-        numPlayers = int(input('how many players are playing? '))
-        for i in range(numPlayers):
-            numChips = int(input(f'how many chips is player {i+1} buying in for? '))
+        for i in range(self.numPlayers):
+            numChips = int(input(f'How many chips is player {i} buying in for? '))
             players.append(Player(i, numChips))
         
         # deal cards
+        shuffle(deck)
         count = 0
         for i in players:
             i.card1 = deck[count]
             i.card2 = deck[count+1]
             count += 2
-        
+
         # output hands
-        for i in range(numPlayers):
+        for i in range(self.numPlayers):
             players[i].toString()
 
     # TODO: assign blinds
     # TODO: checks and bets
-    # TODO: update pot
+    # TODO: update s
     # TODO: winner?
     def preflop(self):
+        '''
         for i in range(len(players)):
-            if players[i].isBlind:
+            if players[i] == 0:
                 # big blind bets 2 chips
                 # small blind bets 1 chip
                 players[i].isBlind = False
                 players[i+1].isBlind = True
+        '''
+        self.checksAndBets()
 
     # TODO: flip three cards from deck
     # TODO: checks and bets
@@ -143,6 +146,7 @@ class Poker():
         deck.pop(8)
         print(deck[8].toString())
         Flop3 = list(deck[4].toString(), deck[5].toString(), deck[6].toString(), deck[7].toString(), deck[8].toString())
+        self.checksAndBets()
 
     def turn(self):
         pass
